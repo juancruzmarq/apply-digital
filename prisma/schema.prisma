@@ -6,10 +6,102 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// "sku": "UEBN4YX5",
+// "name": "Samsung iPhone 13",
+// "brand": "Samsung",
+// "model": "iPhone 13",
+// "category": "Smartphone",
+// "color": "Green",
+// "price": 1855.43,
+// "currency": "USD",
+// "stock": 36
+
+model Product {
+  id    Int    @id @default(autoincrement())
+  sku   String @unique
+  name  String
+  price Float
+  stock Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  modelId    Int
+  model      Model    @relation(fields: [modelId], references: [id])
+  brandId    Int
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  colorId    Int
+  color      Color    @relation(fields: [colorId], references: [id])
+  currencyId Int
+  currency   Currency @relation(fields: [currencyId], references: [id])
+}
+
+model Model {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  Product Product[]
+}
+
+model Brand {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  Product Product[]
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  Product Product[]
+}
+
+model Color {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  Product Product[]
+}
+
+model Currency {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  Product Product[]
 }
