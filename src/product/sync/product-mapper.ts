@@ -4,6 +4,8 @@ import type {
   Item,
 } from 'src/common/types/response.types';
 import { ExternalProductDTO } from '../dto/external.dto';
+import { ProductResponseDto } from '../dto/response.dto';
+import { ProductWithRelations } from '../utils/product.types';
 
 @Injectable()
 export class ProductMapper {
@@ -66,5 +68,22 @@ export class ProductMapper {
 
   mapResponse(resp: ExternalAPIResponse): ExternalProductDTO[] {
     return this.mapArray(resp.items ?? []);
+  }
+
+  toResponse(product: ProductWithRelations): ProductResponseDto {
+    return {
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      brand: product.brand.name,
+      category: product.category.name,
+      color: product.color.name,
+      currency: product.currency.code,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+      deletedAt: product.deletedAt,
+    };
   }
 }

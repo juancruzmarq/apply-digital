@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { BrandService } from 'src/brand/brand.service';
 import { CategoryService } from 'src/category/category.service';
@@ -7,6 +12,8 @@ import { CurrencyService } from 'src/currency/currency.service';
 import { ModelService } from 'src/model/model.service';
 import { ExternalProductDTO } from './dto/external.dto';
 import { Prisma, Product } from '@prisma/client';
+import { ProductMapper } from './sync/product-mapper';
+import { ProductResponseDto } from './dto/response.dto';
 
 @Injectable()
 export class ProductService {
@@ -19,6 +26,7 @@ export class ProductService {
     private readonly currencyService: CurrencyService,
     private readonly categoryService: CategoryService,
     private readonly colorService: ColorService,
+    private readonly productMapper: ProductMapper,
   ) {}
 
   async count(where: Prisma.ProductFindManyArgs['where']): Promise<number> {
@@ -30,25 +38,64 @@ export class ProductService {
     include?: Prisma.ProductInclude,
     skip = 0,
     take = 5,
-  ): Promise<Product[] | []> {
-    return this.prisma.product.findMany({
-      where,
-      include,
-      skip,
-      take,
-    });
+    mapToDto = true,
+  ): Promise<ProductResponseDto[] | Product[]> {
+    try {
+      const products = await this.prisma.product.findMany({
+        where,
+        include: {
+          brand: true,
+          category: true,
+          color: true,
+          model: true,
+          currency: true,
+          ...include,
+        },
+        skip,
+        take,
+      });
+      return mapToDto
+        ? products.map((p) => this.productMapper.toResponse(p))
+        : products;
+    } catch (error) {
+      this.logger.error(`Error fetching products`, error);
+      throw error;
+    }
   }
 
-  async findOne(id: number): Promise<Product | null> {
-    return this.prisma.product.findUnique({
-      where: { id },
-    });
-  }
+  async findByIdOrSku(
+    idOrSku: string,
+    mapToDto = true,
+    includeDeleted = false,
+  ): Promise<ProductResponseDto | Product> {
+    try {
+      if (!idOrSku?.trim()) {
+        throw new BadRequestException('Missing id or sku');
+      }
 
-  async findBySku(sku: string): Promise<Product | null> {
-    return this.prisma.product.findUnique({
-      where: { sku },
-    });
+      const isNumeric = /^\d+$/.test(idOrSku);
+      const where: any = isNumeric ? { id: Number(idOrSku) } : { sku: idOrSku };
+
+      if (!includeDeleted) {
+        where.deletedAt = null;
+      }
+
+      const existing = await this.prisma.product.findUnique({
+        where,
+        include: { brand: true, category: true, color: true, currency: true },
+      });
+
+      if (!existing) {
+        throw new NotFoundException(
+          `Product ${isNumeric ? 'id' : 'sku'} not found`,
+        );
+      }
+
+      return mapToDto ? this.productMapper.toResponse(existing) : existing;
+    } catch (error) {
+      this.logger.error(`Error fetching product ${idOrSku}`, error);
+      throw error;
+    }
   }
 
   async upsertProducts(products: ExternalProductDTO[], reviveDeleted = false) {
@@ -124,5 +171,25 @@ export class ProductService {
     this.logger.log(
       `Upsert done. created=${created} updated=${updated} skippedDeleted=${skippedDeleted} failed=${failed}`,
     );
+  }
+
+  async softDeleteByIdOrSku(
+    idOrSku: string,
+    mapToDto = true,
+  ): Promise<ProductResponseDto | Product> {
+    try {
+      const existing = await this.findByIdOrSku(idOrSku, false);
+
+      const updated = await this.prisma.product.update({
+        where: { id: existing.id },
+        data: { deletedAt: new Date() },
+        include: { brand: true, category: true, color: true, currency: true },
+      });
+
+      return mapToDto ? this.productMapper.toResponse(updated) : updated;
+    } catch (error) {
+      this.logger.error(`Error deleting product ${idOrSku}`, error);
+      throw error;
+    }
   }
 }

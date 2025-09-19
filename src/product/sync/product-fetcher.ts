@@ -22,7 +22,7 @@ export class ProductFetcher {
   }
 
   async fetchProducts() {
-    this.logger.log(`Fetching products from ${this.apiUrl}`);
+    this.logger.log('Fetching products from the external API');
 
     try {
       const data = await firstValueFrom(

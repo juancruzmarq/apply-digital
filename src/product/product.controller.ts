@@ -1,11 +1,17 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
 import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 import { GetAllProductDto } from './dto/getAll.dto';
 import { ProductService } from './product.service';
-import { paginated } from 'src/common/http/api-response.util';
+import { ok, paginated } from 'src/common/http/api-response.util';
 import { ProductQueryBuilder } from './utils/product-query.builder';
+import { ProductResponseDto } from './dto/response.dto';
+import { ApiAllProductsQuery } from './docs/api-product-query.decorator';
+import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/public.decorator';
 
-@Controller('product')
+@Public()
+@ApiTags('products')
+@Controller({ path: 'products', version: '1' })
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
@@ -13,6 +19,7 @@ export class ProductController {
   ) {}
 
   @Get('/')
+  @ApiAllProductsQuery()
   async findAll(
     @Query() pagination: PaginationQueryDto,
     @Query() query: GetAllProductDto,
@@ -22,26 +29,70 @@ export class ProductController {
     const { where } = this.productQueryBuilder.build(query);
 
     const total = await this.productService.count(where);
-    const items = await this.productService.findAll(
+    const items = (await this.productService.findAll(
       where,
       undefined,
       skip,
       take,
-    );
+    )) as ProductResponseDto[];
 
     return paginated(items, total, skip, take, 'Products fetched');
   }
 
-  @Get('/:id')
-  findOne(
-    @Param('id', ParseIntPipe)
-    id: number,
+  @Get('/:idOrSku')
+  @ApiResponse({
+    status: 200,
+    description: 'Product found',
+    type: ProductResponseDto,
+  })
+  @ApiParam({
+    name: 'idOrSku',
+    required: true,
+    description: 'Product numeric ID or SKU',
+    schema: {
+      oneOf: [
+        { type: 'integer', example: 123 },
+        { type: 'string', example: 'ZIMPDOPD' },
+      ],
+    },
+  })
+  @ApiQuery({
+    name: 'includeDeleted',
+    required: false,
+    type: Boolean,
+    description: 'Whether to include soft-deleted products',
+  })
+  async findOne(
+    @Param('idOrSku') idOrSku: string,
+    @Query('includeDeleted') includeDeleted?: string,
   ) {
-    return this.productService.findOne(id);
+    const result = await this.productService.findByIdOrSku(
+      idOrSku,
+      true,
+      includeDeleted === 'true',
+    );
+    return ok(result, 200, 'Product fetched');
   }
 
-  @Get('/sku/:sku')
-  findBySku(@Param('sku') sku: string) {
-    return this.productService.findBySku(sku);
+  @Delete(':idOrSku')
+  @ApiParam({
+    name: 'idOrSku',
+    required: true,
+    description: 'Product numeric ID or SKU',
+    schema: {
+      oneOf: [
+        { type: 'integer', example: 123 },
+        { type: 'string', example: 'ZIMPDOPD' },
+      ],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Product deleted',
+    type: ProductResponseDto,
+  })
+  async delete(@Param('idOrSku') idOrSku: string) {
+    const result = await this.productService.softDeleteByIdOrSku(idOrSku);
+    return ok(result, 200, 'Product deleted');
   }
 }

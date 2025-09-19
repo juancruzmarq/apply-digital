@@ -36,4 +36,7 @@ export class GetAllProductDto {
   @IsNumberString()
   @Transform(({ value }) => parseInt(value, 10))
   stockMax?: number;
+
+  @IsOptional()
+  includeDeleted?: string;
 }

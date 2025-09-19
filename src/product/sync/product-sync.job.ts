@@ -1,11 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ProductService } from '../product.service';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { ProductFetcher } from './product-fetcher';
 import { ProductMapper } from './product-mapper';
-
-// 1 HOUR INTERVAL
-const INTERVAL = '0 * * * *'; // Every hour
 
 @Injectable()
 export class ProductSyncJob {
@@ -16,7 +13,7 @@ export class ProductSyncJob {
     private readonly productMapper: ProductMapper,
   ) {}
 
-  @Cron(INTERVAL)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async syncProducts() {
     this.logger.log('Starting product synchronization job');
 
