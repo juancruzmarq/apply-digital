@@ -8,7 +8,6 @@ export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertCategoryByName(name: string): Promise<Category> {
-    this.logger.log(`Upserting category: ${name}`);
     try {
       const category = await this.prisma.category.upsert({
         where: { name },

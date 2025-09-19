@@ -9,7 +9,6 @@ export class BrandService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertBrandByName(name: string): Promise<Brand> {
-    this.logger.log(`Upserting brand: ${name}`);
     try {
       const brand = await this.prisma.brand.upsert({
         where: { name },

@@ -9,7 +9,6 @@ export class ColorService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertColorByName(name: string): Promise<Color> {
-    this.logger.log(`Upserting color: ${name}`);
     try {
       const color = await this.prisma.color.upsert({
         where: { name },

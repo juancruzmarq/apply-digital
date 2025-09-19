@@ -9,7 +9,6 @@ export class CurrencyService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertCurrencyByCode(code: string): Promise<Currency> {
-    this.logger.log(`Upserting currency: ${code}`);
     try {
       const currency = await this.prisma.currency.upsert({
         where: { code },

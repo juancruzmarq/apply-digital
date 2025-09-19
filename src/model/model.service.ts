@@ -9,7 +9,6 @@ export class ModelService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertModelByName(name: string): Promise<Model> {
-    this.logger.log(`Upserting model: ${name}`);
     try {
       const model = await this.prisma.model.upsert({
         where: { name },
