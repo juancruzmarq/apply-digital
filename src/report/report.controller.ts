@@ -2,9 +2,10 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { PercentageNonDeletedDto } from './dto/percentage-non-deleted.dto';
 import { ok } from 'src/common/http/api-response.util';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Reports')
+@ApiBearerAuth('bearer')
 @Controller({ path: 'reports', version: '1' })
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
@@ -23,29 +24,28 @@ export class ReportController {
     type: String,
     example: '2025-01-31',
   })
-  getReports(@Query() query: PercentageNonDeletedDto) {
+  async getReports(@Query() query: PercentageNonDeletedDto) {
     const reports = {
       percentageDeletedProducts:
-        this.reportService.getPercentageOfDeletedProducts(),
+        await this.reportService.getPercentageOfDeletedProducts(),
       percentageNonDeletedProducts:
-        this.reportService.getPercentageOfNonDeletedProducts(
+        await this.reportService.getPercentageOfNonDeletedProducts(
           query.withPrice,
           query.from,
           query.to,
         ),
-      outOfStockPercentage: this.reportService.getOutOfStockPercentage(),
+      outOfStockPercentage: await this.reportService.getOutOfStockPercentage(),
     };
 
     return ok(reports, 200, 'Reports fetched');
   }
 
   @Get('/percentage-deleted')
-  getPercentageOfDeletedProducts() {
-    return ok(
-      this.reportService.getPercentageOfDeletedProducts(),
-      200,
-      'Percentage of deleted products fetched',
-    );
+  async getPercentageOfDeletedProducts() {
+    const percentage =
+      await this.reportService.getPercentageOfDeletedProducts();
+
+    return ok(percentage, 200, 'Percentage of deleted products fetched');
   }
 
   @Get('/percentage-non-deleted')
@@ -62,9 +62,11 @@ export class ReportController {
     type: String,
     example: '2025-01-31',
   })
-  getPercentageOfNonDeletedProducts(@Query() query: PercentageNonDeletedDto) {
+  async getPercentageOfNonDeletedProducts(
+    @Query() query: PercentageNonDeletedDto,
+  ) {
     const { withPrice, from, to } = query;
-    const res = this.reportService.getPercentageOfNonDeletedProducts(
+    const res = await this.reportService.getPercentageOfNonDeletedProducts(
       withPrice,
       from,
       to,
@@ -73,11 +75,8 @@ export class ReportController {
   }
 
   @Get('/percentage-out-of-stock')
-  getOutOfStockPercentage() {
-    return ok(
-      this.reportService.getOutOfStockPercentage(),
-      200,
-      'Out of stock percentage fetched',
-    );
+  async getOutOfStockPercentage() {
+    const percentage = await this.reportService.getOutOfStockPercentage();
+    return ok(percentage, 200, 'Out of stock percentage fetched');
   }
 }
