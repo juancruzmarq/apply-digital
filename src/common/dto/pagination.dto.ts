@@ -1,9 +1,9 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, Min, Max } from 'class-validator';
 
 export class PaginationQueryDto {
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Number of items to skip',
     required: false,
     example: 0,
@@ -19,7 +19,7 @@ export class PaginationQueryDto {
   )
   skip?: number;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Number of items to return',
     required: false,
     example: 5,
