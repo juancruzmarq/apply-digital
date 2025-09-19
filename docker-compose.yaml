@@ -1,15 +1,30 @@
-version: '3.9'
 services:
   db:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: applydigital
-      POSTGRES_DB: applydigital
-    ports:
-      - '5432:5432'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-applydigital}
+      POSTGRES_DB: ${POSTGRES_DB:-applydigital}
+    ports: ['5432:5432']
+    volumes: ['pgdata:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-applydigital}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env 
+  #   ports: ['3000:3000']
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+      
 volumes:
   pgdata:
