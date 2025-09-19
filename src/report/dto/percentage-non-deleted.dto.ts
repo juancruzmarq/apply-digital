@@ -3,7 +3,10 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsISO8601, IsOptional } from 'class-validator';
 
 export class PercentageNonDeletedDto {
-  @ApiPropertyOptional({ type: Boolean, description: 'Filtrar solo price > 0' })
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Filter to products with a price greater than zero',
+  })
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
