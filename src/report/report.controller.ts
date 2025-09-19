@@ -4,8 +4,8 @@ import { PercentageNonDeletedDto } from './dto/percentage-non-deleted.dto';
 import { ok } from 'src/common/http/api-response.util';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('reports')
-@Controller('reports')
+@ApiTags('Reports')
+@Controller({ path: 'reports', version: '1' })
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
