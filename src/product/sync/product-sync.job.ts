@@ -13,7 +13,7 @@ export class ProductSyncJob {
     private readonly productMapper: ProductMapper,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_HOUR)
   async syncProducts() {
     this.logger.log('Starting product synchronization job');
 
