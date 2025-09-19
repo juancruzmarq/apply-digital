@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ResponseTransformInterceptor } from './common/http/api-response.interceptor';
 import { AllExceptionsFilter } from './common/http/all-exceptions.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +12,15 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseTransformInterceptor(new Reflector()));
   app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors();
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   app.setGlobalPrefix('api');
 
