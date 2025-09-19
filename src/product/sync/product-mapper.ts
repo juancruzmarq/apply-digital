@@ -79,6 +79,7 @@ export class ProductMapper {
       stock: product.stock,
       brand: product.brand.name,
       category: product.category.name,
+      model: product.model.name,
       color: product.color.name,
       currency: product.currency.code,
       createdAt: product.createdAt,
