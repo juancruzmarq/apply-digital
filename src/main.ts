@@ -28,7 +28,6 @@ async function bootstrap() {
       .setTitle('Product API')
       .setDescription('API documentation for the Product service')
       .setVersion('1.0')
-      .addTag('products')
       .addBearerAuth(
         {
           type: 'http',
