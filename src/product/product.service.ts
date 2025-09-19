@@ -82,7 +82,13 @@ export class ProductService {
 
       const existing = await this.prisma.product.findUnique({
         where,
-        include: { brand: true, category: true, color: true, currency: true },
+        include: {
+          brand: true,
+          category: true,
+          color: true,
+          currency: true,
+          model: true,
+        },
       });
 
       if (!existing) {
@@ -183,7 +189,13 @@ export class ProductService {
       const updated = await this.prisma.product.update({
         where: { id: existing.id },
         data: { deletedAt: new Date() },
-        include: { brand: true, category: true, color: true, currency: true },
+        include: {
+          brand: true,
+          category: true,
+          color: true,
+          currency: true,
+          model: true,
+        },
       });
 
       return mapToDto ? this.productMapper.toResponse(updated) : updated;
