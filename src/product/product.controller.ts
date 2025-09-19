@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 import { GetAllProductDto } from './dto/getAll.dto';
 import { ProductService } from './product.service';
@@ -8,6 +8,7 @@ import { ProductResponseDto } from './dto/response.dto';
 import { ApiAllProductsQuery } from './docs/api-product-query.decorator';
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
+import { ProductSyncJob } from './sync/product-sync.job';
 
 @Public()
 @ApiTags('Products')
@@ -16,6 +17,7 @@ export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly productQueryBuilder: ProductQueryBuilder,
+    private readonly productSyncService: ProductSyncJob,
   ) {}
 
   @Get('/')
@@ -72,6 +74,16 @@ export class ProductController {
       includeDeleted === 'true',
     );
     return ok(result, 200, 'Product fetched');
+  }
+
+  @Post('/sync')
+  @ApiResponse({
+    status: 200,
+    description: 'Endpoint to manually trigger product synchronization',
+  })
+  async sync() {
+    await this.productSyncService.syncProducts();
+    return ok(null, 200, 'Product synchronization triggered');
   }
 
   @Delete(':idOrSku')
