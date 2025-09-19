@@ -1,7 +1,14 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, Min, Max } from 'class-validator';
 
 export class PaginationQueryDto {
+  @ApiPropertyOptional({
+    description: 'Number of items to skip',
+    required: false,
+    example: 0,
+    type: Number,
+  })
   @IsOptional()
   @IsInt({
     message: 'The number to skip must be an integer',
@@ -12,6 +19,12 @@ export class PaginationQueryDto {
   )
   skip?: number;
 
+  @ApiPropertyOptional({
+    description: 'Number of items to return',
+    required: false,
+    example: 5,
+    type: Number,
+  })
   @IsOptional()
   @IsInt({
     message: 'The number of items to return must be an integer',
