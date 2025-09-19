@@ -10,7 +10,7 @@ import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
 
 @Public()
-@ApiTags('products')
+@ApiTags('Products')
 @Controller({ path: 'products', version: '1' })
 export class ProductController {
   constructor(
