@@ -35,5 +35,6 @@ import { ProductMapper } from './sync/product-mapper';
     ProductFetcher,
     ProductMapper,
   ],
+  exports: [ProductService],
 })
 export class ProductModule {}
