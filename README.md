@@ -63,6 +63,7 @@ http://localhost:3000/api/docs
 ---
 
 ### Environment Variables
+- You need to set the following environment variables in a `.env` file (see `.env.example`):
 
 | Variable                  | Description                       | Example                                    |
 | ------------------------- | --------------------------------- | ------------------------------------------ |
