@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ProductService } from 'src/product/product.service';
+import { ProductService } from '../product/product.service';
 import {
   OutOfStockPercentageResponseDto,
   PercentageDeletedResponseDto,

@@ -4,12 +4,12 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
-import { BrandService } from 'src/brand/brand.service';
-import { CategoryService } from 'src/category/category.service';
-import { ColorService } from 'src/color/color.service';
-import { CurrencyService } from 'src/currency/currency.service';
-import { ModelService } from 'src/model/model.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { BrandService } from '../brand/brand.service';
+import { CategoryService } from '../category/category.service';
+import { ColorService } from '../color/color.service';
+import { CurrencyService } from '../currency/currency.service';
+import { ModelService } from '../model/model.service';
 import { ExternalProductDTO } from './dto/external.dto';
 import { Prisma, Product } from '@prisma/client';
 import { ProductMapper } from './sync/product-mapper';
@@ -104,7 +104,10 @@ export class ProductService {
     }
   }
 
-  async upsertProducts(products: ExternalProductDTO[], reviveDeleted = false) {
+  async upsertProducts(
+    products: ExternalProductDTO[],
+    reviveDeleted = false,
+  ): Promise<void> {
     this.logger.log(`Upserting ${products.length} products...`);
 
     let created = 0,
@@ -177,6 +180,13 @@ export class ProductService {
     this.logger.log(
       `Upsert done. created=${created} updated=${updated} skippedDeleted=${skippedDeleted} failed=${failed}`,
     );
+
+    if (failed > 0) {
+      throw new Error(`${failed} products failed to upsert`);
+    }
+
+    this.logger.log('All products upserted successfully');
+    return;
   }
 
   async softDeleteByIdOrSku(

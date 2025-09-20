@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ReportController } from './report.controller';
 import { ReportService } from './report.service';
-import { ProductModule } from 'src/product/product.module';
+import { ProductModule } from '../product/product.module';
 
 @Module({
   imports: [ProductModule],

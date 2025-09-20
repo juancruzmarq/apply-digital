@@ -1,13 +1,13 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
+import { PaginationQueryDto } from '../common/dto/pagination.dto';
 import { GetAllProductDto } from './dto/getAll.dto';
 import { ProductService } from './product.service';
-import { ok, paginated } from 'src/common/http/api-response.util';
+import { ok, paginated } from '../common/http/api-response.util';
 import { ProductQueryBuilder } from './utils/product-query.builder';
 import { ProductResponseDto } from './dto/response.dto';
 import { ApiAllProductsQuery } from './docs/api-product-query.decorator';
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/auth/public.decorator';
+import { Public } from '../auth/public.decorator';
 import { ProductSyncJob } from './sync/product-sync.job';
 
 @Public()

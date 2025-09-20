@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import type {
   ExternalAPIResponse,
   Item,
-} from 'src/common/types/response.types';
+} from '../../common/types/response.types';
 import { ExternalProductDTO } from '../dto/external.dto';
 import { ProductResponseDto } from '../dto/response.dto';
 import { ProductWithRelations } from '../utils/product.types';

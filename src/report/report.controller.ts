@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { PercentageNonDeletedDto } from './dto/percentage-non-deleted.dto';
-import { ok } from 'src/common/http/api-response.util';
+import { ok } from '../common/http/api-response.util';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Reports')
