@@ -9,6 +9,7 @@ export function ApiAllProductsQuery() {
     ApiQuery({ name: 'model', required: false, type: String }),
     ApiQuery({ name: 'category', required: false, type: String }),
     ApiQuery({ name: 'type', required: false, type: String }),
+    ApiQuery({ name: 'name', required: false, type: String }),
     ApiQuery({
       name: 'colors',
       required: false,
