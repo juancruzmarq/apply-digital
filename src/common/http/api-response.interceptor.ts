@@ -25,17 +25,14 @@ export class ResponseTransformInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((body) => {
-        // Si ya viene en formato ApiResponse, solo completa path/timestamp si faltan
         if (body && typeof body === 'object' && 'ok' in body) {
           (body as ApiResponse<any>).path ??= path;
           body.timestamp ??= new Date().toISOString();
           return body;
         }
 
-        // Permitir salir crudo (streams, archivos, etc.)
         if (skipWrap) return body;
 
-        // Envolver por defecto como 200 OK
         const wrapped = ok(body);
         wrapped.path = path;
         return wrapped;
