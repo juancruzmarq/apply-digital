@@ -11,7 +11,6 @@ export class ProductQueryBuilder {
       brand,
       model,
       category,
-      type,
       color,
       priceMin,
       priceMax,
@@ -25,7 +24,6 @@ export class ProductQueryBuilder {
       ...(brand && { brand: { name: { in: brand , mode: 'insensitive'} } }),
       ...(model && { model: { name: { in: model , mode: 'insensitive'} } }),
       ...(category && { category: { name: { in: category, mode: 'insensitive' } } }),
-      ...(type && { type: { name: { in: type, mode: 'insensitive' } } }),
       ...(color && { color: { name: { in: color , mode: 'insensitive'} } }),
       
       ...(includeDeleted ? {} : { deletedAt: null }),

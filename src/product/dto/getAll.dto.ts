@@ -10,7 +10,9 @@ export class GetAllProductDto {
     example: 'Apple Mi Watch',
   })
   @IsOptional()
-  @IsString()
+  @IsString(
+    { message: 'Name filter must be a string' },
+  )
   name?: string;
 
   @ApiPropertyOptional({
@@ -50,18 +52,6 @@ export class GetAllProductDto {
   category?: string[];
 
   @ApiPropertyOptional({
-    description: 'Filter products by type',
-    required: false,
-    example: 'Electronics',
-  })
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) => {
-    return new ArrayOfStringValidationPipe().transform(value);
-  })
-  type?: string[];
-
-  @ApiPropertyOptional({
     description: 'Filter products by color name',
     required: false,
     example: 'Black',
@@ -80,7 +70,10 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    {},
+    { message: 'Minimum price filter must be a number' },
+  )
   @Transform(({ value }) => parseFloat(value))
   priceMin?: number;
 
@@ -91,7 +84,10 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    {},
+    { message: 'Maximum price filter must be a number' },
+  )
   @Transform(({ value }) => parseFloat(value))
   priceMax?: number;
 
@@ -102,7 +98,9 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsInt()
+  @IsInt(
+    { message: 'Minimum stock filter must be an integer' },
+  )
   @Transform(({ value }) => parseInt(value, 10))
   stockMin?: number;
 
@@ -113,7 +111,9 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsInt()
+  @IsInt(
+    { message: 'Maximum stock filter must be an integer' },
+  )
   @Transform(({ value }) => parseInt(value, 10))
   stockMax?: number;
 
@@ -123,7 +123,9 @@ export class GetAllProductDto {
     example: 'true',
   })
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean(
+    { message: 'includeDeleted must be a boolean value' },
+  )
   @Transform(({ value }) => value === 'true')
   includeDeleted?: boolean;
 }
