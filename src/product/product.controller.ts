@@ -77,10 +77,6 @@ export class ProductController {
   }
 
   @Post('/sync')
-  @ApiResponse({
-    status: 200,
-    description: 'Endpoint to manually trigger product synchronization',
-  })
   async sync() {
     await this.productSyncService.syncProducts();
     return ok(null, 200, 'Product synchronization triggered');
