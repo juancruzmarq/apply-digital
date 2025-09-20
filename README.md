@@ -53,6 +53,9 @@ docker-compose down
 # Stop services and remove volumes
 docker-compose down -v
 
+# Synchronize products from Contentful
+curl -X POST http://localhost:3000/api/v1/products/sync
+
 # Access the API
 http://localhost:3000/api/v1/products
 
