@@ -14,17 +14,17 @@ services:
       timeout: 3s
       retries: 10
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env 
-  #   ports: ['3000:3000']
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env 
+    ports: ['3000:3000']
+    depends_on:
+      db:
+        condition: service_healthy
       
 volumes:
   pgdata:
