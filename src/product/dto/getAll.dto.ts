@@ -1,15 +1,29 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumberString, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayOfStringValidationPipe } from '../../common/pipes/arrayOfStrings.pipe';
 
 export class GetAllProductDto {
+  @ApiPropertyOptional({
+    description: 'Filter products by name',
+    required: false,
+    example: 'Apple Mi Watch',
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
   @ApiPropertyOptional({
     description: 'Filter products by brand name',
     required: false,
     example: 'Samsung',
   })
   @IsOptional()
-  brand?: string;
+  @IsArray()
+  @Transform(({ value }) => {
+    return new ArrayOfStringValidationPipe().transform(value);
+  })
+  brand?: string[];
 
   @ApiPropertyOptional({
     description: 'Filter products by model name',
@@ -17,7 +31,11 @@ export class GetAllProductDto {
     example: 'Galaxy S21',
   })
   @IsOptional()
-  model?: string;
+  @IsArray()
+  @Transform(({ value }) => {
+    return new ArrayOfStringValidationPipe().transform(value);
+  })
+  model?: string[];
 
   @ApiPropertyOptional({
     description: 'Filter products by category name',
@@ -25,7 +43,11 @@ export class GetAllProductDto {
     example: 'Smartphones',
   })
   @IsOptional()
-  category?: string;
+  @IsArray()
+  @Transform(({ value }) => {
+    return new ArrayOfStringValidationPipe().transform(value);
+  })
+  category?: string[];
 
   @ApiPropertyOptional({
     description: 'Filter products by type',
@@ -33,7 +55,11 @@ export class GetAllProductDto {
     example: 'Electronics',
   })
   @IsOptional()
-  type?: string;
+  @IsArray()
+  @Transform(({ value }) => {
+    return new ArrayOfStringValidationPipe().transform(value);
+  })
+  type?: string[];
 
   @ApiPropertyOptional({
     description: 'Filter products by color name',
@@ -41,7 +67,11 @@ export class GetAllProductDto {
     example: 'Black',
   })
   @IsOptional()
-  colors?: string;
+  @IsArray()
+  @Transform(({ value }) => {
+    return new ArrayOfStringValidationPipe().transform(value);
+  })
+  color?: string[];
 
   @ApiPropertyOptional({
     description: 'Minimum price filter',
@@ -50,7 +80,7 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsNumber()
   @Transform(({ value }) => parseFloat(value))
   priceMin?: number;
 
@@ -61,7 +91,7 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsNumber()
   @Transform(({ value }) => parseFloat(value))
   priceMax?: number;
 
@@ -72,7 +102,7 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
   @Transform(({ value }) => parseInt(value, 10))
   stockMin?: number;
 
@@ -83,7 +113,7 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
   @Transform(({ value }) => parseInt(value, 10))
   stockMax?: number;
 
@@ -93,5 +123,7 @@ export class GetAllProductDto {
     example: 'true',
   })
   @IsOptional()
-  includeDeleted?: string;
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  includeDeleted?: boolean;
 }
