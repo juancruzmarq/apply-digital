@@ -7,16 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// "sku": "UEBN4YX5",
-// "name": "Samsung iPhone 13",
-// "brand": "Samsung",
-// "model": "iPhone 13",
-// "category": "Smartphone",
-// "color": "Green",
-// "price": 1855.43,
-// "currency": "USD",
-// "stock": 36
-
 model Product {
   id    Int    @id @default(autoincrement())
   sku   String @unique
