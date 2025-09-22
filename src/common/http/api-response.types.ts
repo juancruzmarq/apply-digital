@@ -24,8 +24,8 @@ export interface ApiError {
 
 export interface PaginationMeta {
   total: number;
-  skip: number; 
-  take: number; 
-  count: number; 
+  skip: number;
+  take: number;
+  count: number;
   hasMore: boolean;
 }

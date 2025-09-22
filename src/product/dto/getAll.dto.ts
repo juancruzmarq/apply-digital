@@ -1,6 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ArrayOfStringValidationPipe } from '../../common/pipes/arrayOfStrings.pipe';
 
 export class GetAllProductDto {
@@ -10,9 +17,7 @@ export class GetAllProductDto {
     example: 'Apple Mi Watch',
   })
   @IsOptional()
-  @IsString(
-    { message: 'Name filter must be a string' },
-  )
+  @IsString({ message: 'Name filter must be a string' })
   name?: string;
 
   @ApiPropertyOptional({
@@ -23,7 +28,7 @@ export class GetAllProductDto {
   @IsOptional()
   @IsArray()
   @Transform(({ value }) => {
-    return new ArrayOfStringValidationPipe().transform(value);
+    return new ArrayOfStringValidationPipe().transform(String(value));
   })
   brand?: string[];
 
@@ -70,11 +75,8 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumber(
-    {},
-    { message: 'Minimum price filter must be a number' },
-  )
-  @Transform(({ value }) => parseFloat(value))
+  @IsNumber({}, { message: 'Minimum price filter must be a number' })
+  @Transform(({ value }) => parseFloat(value as string))
   priceMin?: number;
 
   @ApiPropertyOptional({
@@ -84,11 +86,8 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsNumber(
-    {},
-    { message: 'Maximum price filter must be a number' },
-  )
-  @Transform(({ value }) => parseFloat(value))
+  @IsNumber({}, { message: 'Maximum price filter must be a number' })
+  @Transform(({ value }) => parseFloat(value as string))
   priceMax?: number;
 
   @ApiPropertyOptional({
@@ -98,10 +97,8 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsInt(
-    { message: 'Minimum stock filter must be an integer' },
-  )
-  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt({ message: 'Minimum stock filter must be an integer' })
+  @Transform(({ value }) => parseInt(value as string, 10))
   stockMin?: number;
 
   @ApiPropertyOptional({
@@ -111,10 +108,8 @@ export class GetAllProductDto {
     type: Number,
   })
   @IsOptional()
-  @IsInt(
-    { message: 'Maximum stock filter must be an integer' },
-  )
-  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt({ message: 'Maximum stock filter must be an integer' })
+  @Transform(({ value }) => parseInt(value as string, 10))
   stockMax?: number;
 
   @ApiPropertyOptional({
@@ -123,9 +118,7 @@ export class GetAllProductDto {
     example: 'true',
   })
   @IsOptional()
-  @IsBoolean(
-    { message: 'includeDeleted must be a boolean value' },
-  )
+  @IsBoolean({ message: 'includeDeleted must be a boolean value' })
   @Transform(({ value }) => value === 'true')
   includeDeleted?: boolean;
 }

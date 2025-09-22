@@ -1,0 +1,73 @@
+name: CI (NestJS Prisma PostgreSQL)
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: applydigital
+          POSTGRES_DB: applydigital
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://user:applydigital@localhost:5432/applydigital
+      SHADOW_DATABASE_URL: postgresql://user:applydigital@localhost:5432/applydigital_shadow
+      NODE_ENV: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      # Create the shadow database for migrations
+      - name: Create shadow database
+        run: |
+          PGPASSWORD=applydigital psql -h localhost -U user -p 5432 -d applydigital -c "DROP DATABASE IF EXISTS applydigital_shadow;"
+          PGPASSWORD=applydigital psql -h localhost -U user -p 5432 -d applydigital -c "CREATE DATABASE applydigital_shadow;"
+
+      # Apply real migrations to the test schema
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage
