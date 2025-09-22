@@ -1,4 +1,4 @@
-FROM node:20-alpine as base
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npx prisma generate && \
     npm install -g ts-node && \
     npm run build
 
-FROM node:20-alpine as production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
