@@ -51,8 +51,8 @@ jobs:
       # Create the shadow database for migrations
       - name: Create shadow database
         run: |
-          PGPASSWORD=applydigital psql -h localhost -U applydigital -p 5432 -d applydigital -c "DROP DATABASE IF EXISTS applydigital_shadow;"
-          PGPASSWORD=applydigital psql -h localhost -U applydigital -p 5432 -d applydigital -c "CREATE DATABASE applydigital_shadow;"
+          PGPASSWORD=applydigital psql -h localhost -U user -p 5432 -d applydigital -c "DROP DATABASE IF EXISTS applydigital_shadow;"
+          PGPASSWORD=applydigital psql -h localhost -U user -p 5432 -d applydigital -c "CREATE DATABASE applydigital_shadow;"
 
       # Apply real migrations to the test schema
       - name: Apply migrations
