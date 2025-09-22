@@ -36,22 +36,23 @@ It integrates with **Contentful** for product synchronization, uses **JWT** for 
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd product-service
+cd apply-digital
 
 # Create the .env file
 cp .env.example .env
 
+# Run Docker
 # Start the app and PostgreSQL
-docker-compose up -d --build
+docker compose up -d --build
 
 # View logs
-docker-compose logs -f app
+docker compose logs -f app
 
 # Stop services
-docker-compose down
+docker compose down
 
 # Stop services and remove volumes
-docker-compose down -v
+docker compose down -v
 
 # Synchronize products from Contentful
 curl -X POST http://localhost:3000/api/v1/products/sync
