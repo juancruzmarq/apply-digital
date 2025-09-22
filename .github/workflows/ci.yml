@@ -28,8 +28,8 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://app_user:app_pass@localhost:5432/app_test
-      SHADOW_DATABASE_URL: postgresql://app_user:app_pass@localhost:5432/app_test_shadow
+      DATABASE_URL: postgresql://user:applydigital@localhost:5432/applydigital
+      SHADOW_DATABASE_URL: postgresql://user:applydigital@localhost:5432/applydigital_shadow
       NODE_ENV: test
 
     steps:
@@ -51,8 +51,8 @@ jobs:
       # Create the shadow database for migrations
       - name: Create shadow database
         run: |
-          PGPASSWORD=app_pass psql -h localhost -U app_user -p 5432 -d app_test -c "DROP DATABASE IF EXISTS app_test_shadow;"
-          PGPASSWORD=app_pass psql -h localhost -U app_user -p 5432 -d app_test -c "CREATE DATABASE app_test_shadow;"
+          PGPASSWORD=applydigital psql -h localhost -U applydigital -p 5432 -d applydigital -c "DROP DATABASE IF EXISTS applydigital_shadow;"
+          PGPASSWORD=applydigital psql -h localhost -U applydigital -p 5432 -d applydigital -c "CREATE DATABASE applydigital_shadow;"
 
       # Apply real migrations to the test schema
       - name: Apply migrations
