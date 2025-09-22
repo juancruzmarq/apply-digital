@@ -1,98 +1,90 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📦 Product Service API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A REST API built with [NestJS](https://nestjs.com/) and [Prisma](https://www.prisma.io/) for product management.  
+It integrates with **Contentful** for product synchronization, uses **JWT** for authentication, and supports **soft deletion**, **pagination**, and **filtering**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## ✨ Features
+- 🔍 **Query products** with filters (brand, category, price range, etc.)
+- 📄 **Pagination** with `skip` and `take` parameters (max 5 items per page).
+- 🗑️ **Soft delete**: products are excluded from queries by default if `deletedAt` is set.
+- 🔑 **JWT authentication** (simple, no roles yet).
+- 📚 **Swagger documentation** available at `/api/docs`.
+- 🔄 **Manual synchronization** of products from Contentful (`POST /api/v1/products/sync`).
+- ✅ **Testing with Jest** + coverage reports.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Considerations
+- I used prisma as ORM for simplicity and type safety, is the main ORM I use in my projects nowadays and i think is a great fit for this kind of project.
+- Soft deletion is implemented by adding a `deletedAt` timestamp column to the `Product` model. When a product is "deleted", this field is set to the current timestamp. By default, all queries filter out products where `deletedAt` is not null.
+- The includeDeleted query parameter allows clients to include soft-deleted products in their queries if needed.
+- I didn't implement user management or roles for simplicity, but the JWT authentication can be easily extended to include user roles and permissions.
+- I didn't implement create/update endpoints for products since the main focus is on querying, deletion, and synchronization from Contentful.
+- Error handling is basic but can be extended with more specific exceptions and logging as needed.
 
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) >= 18
+- [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)  
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+
+### Installation & Run
 ```bash
-$ pnpm install
+# Clone the repository
+git clone <repo-url>
+cd product-service
+
+# Create the .env file
+cp .env.example .env
+
+# Start the app and PostgreSQL
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f app
+
+# Stop services
+docker-compose down
+
+# Stop services and remove volumes
+docker-compose down -v
+
+# Synchronize products from Contentful
+curl -X POST http://localhost:3000/api/v1/products/sync
+
+# Access the API
+http://localhost:3000/api/v1/products
+
+# Access Swagger documentation
+http://localhost:3000/api/docs
 ```
 
-## Compile and run the project
+---
 
+### Environment Variables
+- You need to set the following environment variables in a `.env` file (see `.env.example`):    
+
+| Variable                  | Description                       | Example                                    |
+| ------------------------- | --------------------------------- | ------------------------------------------ |
+| `CONTENTFUL_SPACE_ID`     | Contentful space ID               | `xxxxxx`                                   |
+| `CONTENTFUL_ACCESS_TOKEN` | Contentful access token           | `abc123`                                   |
+| `CONTENTFUL_ENVIRONMENT`  | Contentful environment            | `master`                                   |
+| `CONTENTFUL_CONTENT_TYPE` | Content type for products         | `product`                                  |
+| `DATABASE_URL`            | PostgreSQL connection string      | `postgresql://user:applydigital@db:5432/applydigital` |
+| `JWT_SECRET`              | Secret key for signing JWT tokens | `supersecret`                              |
+
+---
+
+### Authentication
+- For testing private endpoints, use the hardcoded JWT token below:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+npx ts-node scripts/sign-jwt.ts
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+Use the generated token in the `Authorization` header:
+```Authorization
+Bearer <your-token>
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
