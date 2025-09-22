@@ -15,7 +15,7 @@ export class PaginationQueryDto {
   })
   @Min(0, { message: 'The number to skip must be greater than or equal to 0' })
   @Transform(({ value }) =>
-    value !== undefined ? parseInt(value, 10) : undefined,
+    value !== undefined ? parseInt(value as string, 10) : undefined,
   )
   skip?: number;
 
@@ -36,7 +36,7 @@ export class PaginationQueryDto {
     message: 'The number of items to return must be less than or equal to 5',
   })
   @Transform(({ value }) =>
-    value !== undefined ? parseInt(value, 10) : undefined,
+    value !== undefined ? parseInt(value as string, 10) : undefined,
   )
   take?: number;
 }

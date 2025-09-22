@@ -84,7 +84,7 @@ describe('ProductController', () => {
       productServiceMock.count.mockResolvedValue(12);
       productServiceMock.findAll.mockResolvedValue(items);
 
-      const pagination = { skip: 2, take: 5 }; 
+      const pagination = { skip: 2, take: 5 };
       const query = { brand: 'Apple' } as any;
 
       const res = await controller.findAll(pagination as any, query);

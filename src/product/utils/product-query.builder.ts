@@ -21,19 +21,29 @@ export class ProductQueryBuilder {
 
     const where: Prisma.ProductWhereInput = {
       ...(name && { name: { contains: name, mode: 'insensitive' } }),
-      ...(brand && { brand: { name: { in: brand , mode: 'insensitive'} } }),
-      ...(model && { model: { name: { in: model , mode: 'insensitive'} } }),
-      ...(category && { category: { name: { in: category, mode: 'insensitive' } } }),
-      ...(color && { color: { name: { in: color , mode: 'insensitive'} } }),
-      
+      ...(brand && { brand: { name: { in: brand, mode: 'insensitive' } } }),
+      ...(model && { model: { name: { in: model, mode: 'insensitive' } } }),
+      ...(category && {
+        category: { name: { in: category, mode: 'insensitive' } },
+      }),
+      ...(color && { color: { name: { in: color, mode: 'insensitive' } } }),
+
       ...(includeDeleted ? {} : { deletedAt: null }),
       ...(priceMin !== undefined || priceMax !== undefined
-        ? { price: { ...(priceMin !== undefined && { gte: priceMin }),
-                    ...(priceMax !== undefined && { lte: priceMax }) } }
+        ? {
+            price: {
+              ...(priceMin !== undefined && { gte: priceMin }),
+              ...(priceMax !== undefined && { lte: priceMax }),
+            },
+          }
         : {}),
       ...(stockMin !== undefined || stockMax !== undefined
-        ? { stock: { ...(stockMin !== undefined && { gte: stockMin }),
-                    ...(stockMax !== undefined && { lte: stockMax }) } }
+        ? {
+            stock: {
+              ...(stockMin !== undefined && { gte: stockMin }),
+              ...(stockMax !== undefined && { lte: stockMax }),
+            },
+          }
         : {}),
     };
 
