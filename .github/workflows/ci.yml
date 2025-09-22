@@ -2,11 +2,9 @@ name: CI (NestJS Prisma PostgreSQL)
 
 on:
   push:
-    branches:
-      - [main, dev]
+    branches: [main, dev]
   pull_request:
-    branches:
-      - [main, dev]
+    branches: [main, dev]
 
 permissions:
   contents: read
@@ -30,7 +28,6 @@ jobs:
           --health-retries 5
 
     env:
-      # Prisma
       DATABASE_URL: postgresql://app_user:app_pass@localhost:5432/app_test
       SHADOW_DATABASE_URL: postgresql://app_user:app_pass@localhost:5432/app_test_shadow
       NODE_ENV: test
